@@ -1,0 +1,1429 @@
+!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecodata - Análisis Económico de Venezuela</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --azul: #0066cc;
+            --azul-oscuro: #004a99;
+            --salmón: #ff7f5c;
+            --salmón-claro: #ffb3a0;
+            --blanco: #ffffff;
+            --gris-claro: #f5f5f5;
+            --gris-texto: #333333;
+            --gris-borde: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--gris-texto);
+            background-color: var(--blanco);
+            line-height: 1.6;
+        }
+
+        /* Header y Navegación */
+        header {
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.95) 0%, rgba(0, 74, 153, 0.95) 100%), 
+                        url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&q=80') center/cover;
+            color: var(--blanco);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 102, 204, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            color: var(--salmón);
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--blanco);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        nav a:hover {
+            color: var(--salmón-claro);
+        }
+
+        nav a.active {
+            color: var(--salmón);
+            border-bottom: 2px solid var(--salmón);
+            padding-bottom: 0.5rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.85) 0%, rgba(0, 74, 153, 0.85) 50%, rgba(255, 127, 92, 0.85) 100%), 
+                        url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80') center/cover;
+            color: var(--blanco);
+            padding: 4rem 2rem;
+            text-align: center;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            max-width: 800px;
+            opacity: 0.95;
+        }
+
+        .cta-button {
+            background-color: var(--salmón);
+            color: var(--blanco);
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .cta-button:hover {
+            background-color: var(--salmón-claro);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 127, 92, 0.3);
+        }
+
+        /* Contenedor Principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Secciones con fondo */
+        section {
+            position: relative;
+        }
+
+        #analisis {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 245, 245, 0.95) 100%),
+                        url('https://images.unsplash.com/photo-1579621970795-f405ede6acdc?w=1200&q=80') right/cover no-repeat;
+        }
+
+        #ecoplus {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(245, 245, 245, 0.96) 100%),
+                        url('https://images.unsplash.com/photo-1611974519337-be89cd02a3df?w=1200&q=80') left/cover no-repeat;
+        }
+
+        #datos {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 245, 245, 0.95) 100%),
+                        url('https://images.unsplash.com/photo-1526304640581-d334cdbbf35f?w=1200&q=80') right/cover no-repeat;
+        }
+
+        #inicio {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(245, 245, 245, 0.94) 100%),
+                        url('https://images.unsplash.com/photo-1563986768609-322da13e763b?w=1200&q=80') center/cover no-repeat;
+        }
+
+        /* Secciones */
+        .section {
+            display: none;
+            padding: 3rem 0;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--azul);
+            margin-bottom: 2rem;
+            border-bottom: 3px solid var(--salmón);
+            padding-bottom: 1rem;
+            display: inline-block;
+        }
+
+        /* Grid de Artículos */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .article-card {
+            background: var(--blanco);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-top: 4px solid var(--azul);
+            cursor: pointer;
+        }
+
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 102, 204, 0.15);
+        }
+
+        .article-card.salmón {
+            border-top-color: var(--salmón);
+        }
+
+        .article-header {
+            background: linear-gradient(135deg, var(--azul), var(--azul-oscuro));
+            color: var(--blanco);
+            padding: 1.5rem;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .article-card:nth-child(1) .article-header {
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.9) 0%, rgba(0, 74, 153, 0.9) 100%), 
+                        url('https://images.unsplash.com/photo-1553729841-8c4fb4c30b1c?w=500&q=80') center/cover;
+        }
+
+        .article-card:nth-child(2) .article-header {
+            background: linear-gradient(135deg, rgba(255, 127, 92, 0.9) 0%, rgba(255, 106, 61, 0.9) 100%), 
+                        url('https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80') center/cover;
+        }
+
+        .article-card:nth-child(3) .article-header {
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.9) 0%, rgba(0, 74, 153, 0.9) 100%), 
+                        url('https://images.unsplash.com/photo-1560707303-4e980ce876ad?w=500&q=80') center/cover;
+        }
+
+        .article-date {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .article-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            line-height: 1.3;
+        }
+
+        .article-body {
+            padding: 1.5rem;
+        }
+
+        .article-excerpt {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .read-more {
+            color: var(--azul);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: gap 0.3s ease;
+        }
+
+        .article-card.salmón .read-more {
+            color: var(--salmón);
+        }
+
+        .read-more:hover {
+            gap: 0.8rem;
+        }
+
+        /* Sección de Análisis */
+        .analisis-container {
+            background: var(--gris-claro);
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .indicator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .indicator-card {
+            background: var(--blanco);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--azul);
+        }
+
+        .indicator-card.rising {
+            border-left-color: #27ae60;
+        }
+
+        .indicator-card.falling {
+            border-left-color: var(--salmón);
+        }
+
+        .indicator-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--azul);
+            margin: 0.5rem 0;
+        }
+
+        .indicator-card.rising .indicator-value {
+            color: #27ae60;
+        }
+
+        .indicator-card.falling .indicator-value {
+            color: var(--salmón);
+        }
+
+        .indicator-label {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .indicator-change {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* Sección EcoPlus */
+        .ecoplus-card {
+            background: linear-gradient(135deg, var(--azul) 0%, var(--azul-oscuro) 100%);
+            color: var(--blanco);
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ecoplus-card:nth-child(1) {
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.9) 0%, rgba(0, 74, 153, 0.9) 100%), 
+                        url('https://images.unsplash.com/photo-1611974519337-be89cd02a3df?w=1200&q=80') center/cover;
+        }
+
+        .ecoplus-card:nth-child(2) {
+            background: linear-gradient(135deg, rgba(255, 127, 92, 0.9) 0%, rgba(255, 106, 61, 0.9) 100%), 
+                        url('https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=1200&q=80') center/cover;
+        }
+
+        .ecoplus-card:nth-child(3) {
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.9) 0%, rgba(0, 74, 153, 0.9) 100%), 
+                        url('https://images.unsplash.com/photo-1526304640581-d334cdbbf35f?w=1200&q=80') center/cover;
+        }
+
+        .ecoplus-card:nth-child(4) {
+            background: linear-gradient(135deg, rgba(255, 127, 92, 0.9) 0%, rgba(255, 106, 61, 0.9) 100%), 
+                        url('https://images.unsplash.com/photo-1578588546007-9d4e9be5d840?w=1200&q=80') center/cover;
+        }
+
+        .ecoplus-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .ecoplus-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .ecoplus-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ecoplus-card p {
+            margin-bottom: 1rem;
+            opacity: 0.95;
+        }
+
+        .ecoplus-tag {
+            display: inline-block;
+            background: var(--salmón);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        /* Sección de Datos */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--blanco);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .data-table thead {
+            background: linear-gradient(135deg, var(--azul) 0%, var(--azul-oscuro) 100%), 
+                        url('https://images.unsplash.com/photo-1576091160550-112169f1d9d5?w=1200&q=80') center/cover;
+            color: var(--blanco);
+        }
+
+        .data-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gris-borde);
+        }
+
+        .data-table tbody tr:hover {
+            background-color: var(--gris-claro);
+        }
+
+        .data-value {
+            font-weight: 600;
+            color: var(--azul);
+        }
+
+        .data-positive {
+            color: #27ae60;
+        }
+
+        .data-negative {
+            color: var(--salmón);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--gris-texto);
+            color: var(--blanco);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--blanco);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--salmón);
+        }
+
+        /* Responsive */
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--blanco);
+            padding: 3rem;
+            border-radius: 10px;
+            max-width: 900px;
+            width: 90%;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--salmón);
+            padding-bottom: 1rem;
+        }
+
+        .modal-header h2 {
+            color: var(--azul);
+            font-size: 1.8rem;
+        }
+
+        .close-btn {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            background: none;
+            border: none;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--salmón);
+        }
+
+        .modal-body {
+            color: var(--gris-texto);
+            line-height: 1.8;
+        }
+
+        .modal-body h3 {
+            color: var(--azul);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .modal-body h4 {
+            color: var(--salmón);
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        .modal-body p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .modal-body ul {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal-body li {
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-stat {
+            background: linear-gradient(135deg, var(--azul), var(--azul-oscuro));
+            color: var(--blanco);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .modal-stat h4 {
+            color: var(--salmón);
+            margin-top: 0;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat-item {
+            background: var(--gris-claro);
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid var(--azul);
+            text-align: center;
+        }
+
+        .stat-item.negative {
+            border-left-color: var(--salmón);
+        }
+
+        .stat-item.positive {
+            border-left-color: #27ae60;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--azul);
+        }
+
+        .stat-item.negative .stat-value {
+            color: var(--salmón);
+        }
+
+        .stat-item.positive .stat-value {
+            color: #27ae60;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        /* Botón para abrir modal */
+        .open-modal-btn {
+            background-color: var(--azul);
+            color: var(--blanco);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        .open-modal-btn:hover {
+            background-color: var(--azul-oscuro);
+            transform: translateY(-2px);
+        }
+
+        .article-card.expandable {
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            nav {
+                gap: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .indicator-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .data-table {
+                font-size: 0.9rem;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 0.7rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .modal-content {
+                padding: 2rem;
+                width: 95%;
+            }
+
+            .modal-header h2 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                📊 Eco<span>data</span>
+            </div>
+            <nav>
+                <a class="nav-link active" data-section="inicio">Inicio</a>
+                <a class="nav-link" data-section="analisis">Análisis</a>
+                <a class="nav-link" data-section="ecoplus">EcoPlus</a>
+                <a class="nav-link" data-section="datos">Datos</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>Ecodata</h1>
+        <p>Análisis profundo y reportajes sobre la economía venezolana. Datos confiables, análisis riguroso.</p>
+        <button class="cta-button" onclick="scrollToSection('analisis')">Explorar Análisis</button>
+    </div>
+
+    <div class="container">
+        <!-- Sección Inicio -->
+        <section id="inicio" class="section active">
+            <h2 class="section-title">Bienvenido a Ecodata</h2>
+            <p style="margin-bottom: 2rem; font-size: 1.1rem;">Somos tu fuente confiable de información económica sobre Venezuela. Combinamos datos rigurosos con análisis profundo para ofrecerte una comprensión completa de la realidad económica del país.</p>
+            
+            <div class="articles-grid">
+                <div class="article-card">
+                    <div class="article-header">
+                        <div class="article-title">Panorama Macroeconómico Trimestral</div>
+                    </div>
+                    <div class="article-body">
+                        <div class="article-excerpt">Análisis completo del desempeño económico en el tercer trimestre del año, incluyendo inflación, tipo de cambio y actividad productiva.</div>
+                        <a href="#" class="read-more">Leer más →</a>
+                    </div>
+                </div>
+
+                <div class="article-card salmón">
+                    <div class="article-header">
+                        <div class="article-title">Tendencias del Mercado Laboral</div>
+                    </div>
+                    <div class="article-body">
+                        <div class="article-excerpt">Examinamos los cambios en el empleo, salarios reales y participación laboral en la economía venezolana actual.</div>
+                        <a href="#" class="read-more">Leer más →</a>
+                    </div>
+                </div>
+
+                <div class="article-card">
+                    <div class="article-header">
+                        <div class="article-title">Sector Petrolero: Perspectivas</div>
+                    </div>
+                    <div class="article-body">
+                        <div class="article-excerpt">Análisis del desempeño del sector petrolero y su impacto en las finanzas públicas y la economía general.</div>
+                        <a href="#" class="read-more">Leer más →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Análisis -->
+        <section id="analisis" class="section">
+            <h2 class="section-title">Análisis Económico</h2>
+            
+            <div class="analisis-container">
+                <h3 style="color: var(--azul); margin-bottom: 1rem;">Indicadores Clave</h3>
+                <div class="indicator-grid">
+                    <div class="indicator-card falling">
+                        <div class="indicator-label">Inflación Anual</div>
+                        <div class="indicator-value">187.3%</div>
+                        <div class="indicator-change">↑ +5.2% respecto a mes anterior</div>
+                    </div>
+                    <div class="indicator-card falling">
+                        <div class="indicator-label">Tipo de Cambio</div>
+                        <div class="indicator-value">Bs/$ 42.50</div>
+                        <div class="indicator-change">↑ Depreciación continua</div>
+                    </div>
+                    <div class="indicator-card falling">
+                        <div class="indicator-label">Reservas Internacionales</div>
+                        <div class="indicator-value">$8.2B</div>
+                        <div class="indicator-change">↓ -12% últimos 6 meses</div>
+                    </div>
+                    <div class="indicator-card rising">
+                        <div class="indicator-label">Crecimiento Sectorial</div>
+                        <div class="indicator-value">+2.1%</div>
+                        <div class="indicator-change">↑ Sector no petrolero</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="articles-grid">
+                <div class="article-card expandable" onclick="openModal('panorama-trimestral')">
+                    <div class="article-header">
+                        <div class="article-title">Panorama Económico Trimestral 2026</div>
+                    </div>
+                    <div class="article-body">
+                        <div class="article-excerpt">Análisis completo del desempeño económico esperado para 2026, incluyendo proyecciones de inflación, crecimiento y estabilización.</div>
+                        <button class="open-modal-btn" onclick="event.stopPropagation();">Ver análisis completo →</button>
+                    </div>
+                </div>
+
+                <div class="article-card salmón expandable" onclick="openModal('balance-petrolero')">
+                    <div class="article-header">
+                        <div class="article-title">Balance del Sector Petrolero</div>
+                    </div>
+                    <div class="article-body">
+                        <div class="article-excerpt">Evaluación detallada de la producción, exportaciones y perspectivas de recuperación del sector petrolero venezolano.</div>
+                        <button class="open-modal-btn" onclick="event.stopPropagation();">Ver balance completo →</button>
+                    </div>
+                </div>
+
+                <div class="article-card">
+                    <div class="article-header">
+                        <div class="article-title">Finanzas Públicas: Situación Actual</div>
+                    </div>
+                    <div class="article-body">
+                        <div class="article-excerpt">Revisión de los ingresos fiscales, gasto público y déficit presupuestario.</div>
+                        <a href="#" class="read-more">Leer análisis →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección EcoPlus -->
+        <section id="ecoplus" class="section">
+            <h2 class="section-title">EcoPlus - Reportajes Especiales</h2>
+            <p style="margin-bottom: 2rem; font-size: 1rem; color: #666;">Reportajes investigativos y análisis profundos sobre temas económicos críticos.</p>
+
+            <div class="ecoplus-card">
+                <div class="ecoplus-content">
+                    <h3>Cadenas de Valor y Desindustrialización</h3>
+                    <p>Un análisis exhaustivo de cómo se han desintegrado las cadenas productivas nacionales y sus implicaciones para la recuperación económica.</p>
+                    <div>
+                        <span class="ecoplus-tag">INVESTIGACIÓN</span>
+                        <span class="ecoplus-tag">LARGO FORMATO</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ecoplus-card" style="background: linear-gradient(135deg, var(--salmón) 0%, #ff6a3d 100%);">
+                <div class="ecoplus-content">
+                    <h3>Remesas y Economía Familiar</h3>
+                    <p>Estudio sobre el papel de las remesas en la economía doméstica, su evolución y el perfil de receptores en diferentes regiones.</p>
+                    <div>
+                        <span class="ecoplus-tag" style="background: var(--azul);">REPORTAJE</span>
+                        <span class="ecoplus-tag" style="background: var(--azul);">DATOS GLOBALES</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ecoplus-card">
+                <div class="ecoplus-content">
+                    <h3>Sector Agrícola: Recuperación o Estancamiento</h3>
+                    <p>Análisis del desempeño agrícola nacional, factores limitantes y potencial de crecimiento en el mediano plazo.</p>
+                    <div>
+                        <span class="ecoplus-tag">SECTORIAL</span>
+                        <span class="ecoplus-tag">PERSPECTIVAS</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ecoplus-card" style="background: linear-gradient(135deg, var(--salmón) 0%, #ff6a3d 100%); cursor: pointer;" onclick="openModal('reservas-oro')">
+                <div class="ecoplus-content">
+                    <h3>Gestión de Reservas de Oro del Banco Central</h3>
+                    <p>Reportaje investigativo sobre cómo se han manejado y movilizado las reservas de oro de la nación y su impacto en la estabilidad financiera.</p>
+                    <div>
+                        <span class="ecoplus-tag" style="background: var(--azul);">INVESTIGACIÓN</span>
+                        <span class="ecoplus-tag" style="background: var(--azul);">RESERVAS</span>
+                    </div>
+                    <button class="open-modal-btn" style="background: var(--blanco); color: #ff6a3d; margin-top: 1rem;" onclick="event.stopPropagation();">Leer reportaje completo →</button>
+                </div>
+            </div>
+
+            <div class="ecoplus-card" style="background: linear-gradient(135deg, var(--azul) 0%, var(--azul-oscuro) 100%);">
+                <div class="ecoplus-content">
+                    <h3>Criptomonedas y Economía Informal</h3>
+                    <p>Investigación sobre el uso de criptomonedas en la economía informal venezolana y su creciente relevancia.</p>
+                    <div>
+                        <span class="ecoplus-tag">INNOVACIÓN</span>
+                        <span class="ecoplus-tag">TENDENCIAS</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Datos -->
+        <section id="datos" class="section">
+            <h2 class="section-title">Base de Datos Económica</h2>
+            
+            <h3 style="color: var(--azul); margin: 2rem 0 1rem 0;">Indicadores Macroeconómicos Junio 2026</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Indicador</th>
+                        <th>Junio 2026</th>
+                        <th>Mayo 2026</th>
+                        <th>Variación M/M</th>
+                        <th>Variación Acumulada</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Inflación Mensual (%)</td>
+                        <td class="data-value">13.8%</td>
+                        <td class="data-value">6.3%</td>
+                        <td class="data-negative">+7.5pp</td>
+                        <td class="data-negative">+129.82%</td>
+                    </tr>
+                    <tr>
+                        <td>Tipo de Cambio (Bs/$)</td>
+                        <td class="data-value">623.02</td>
+                        <td class="data-value">554.43</td>
+                        <td class="data-negative">-12.4%</td>
+                        <td class="data-negative">+544.13% (interanual)</td>
+                    </tr>
+                    <tr>
+                        <td>Reservas Internacionales ($B)</td>
+                        <td class="data-value">13.998</td>
+                        <td class="data-value">12.971</td>
+                        <td class="data-positive">+7.9%</td>
+                        <td class="data-positive">+17.88% vs junio 2025</td>
+                    </tr>
+                    <tr>
+                        <td>Oro Monetario (toneladas)</td>
+                        <td class="data-value">47.01</td>
+                        <td class="data-value">47.01</td>
+                        <td>Sin cambio</td>
+                        <td class="data-negative">-11% vs junio 2025</td>
+                    </tr>
+                    <tr>
+                        <td>Inflación Sector Transporte (%)</td>
+                        <td class="data-negative">16.2%</td>
+                        <td class="data-value">5.3%</td>
+                        <td class="data-negative">+10.9pp</td>
+                        <td class="data-negative">+122.70% acumulada</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 style="color: var(--azul); margin: 2rem 0 1rem 0;">Evolución de Indicadores Clave 2026</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Mes</th>
+                        <th>Inflación (%)</th>
+                        <th>Tipo de Cambio (Bs/$)</th>
+                        <th>Reservas ($B)</th>
+                        <th>Variación Acumulada</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Enero</strong></td>
+                        <td class="data-negative">32.6%</td>
+                        <td class="data-value">298.75</td>
+                        <td class="data-value">11.8</td>
+                        <td class="data-negative">+32.6%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Febrero</strong></td>
+                        <td class="data-negative">14.6%</td>
+                        <td class="data-value">380.45</td>
+                        <td class="data-value">12.1</td>
+                        <td class="data-negative">+51.8%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Marzo</strong></td>
+                        <td class="data-negative">13.1%</td>
+                        <td class="data-value">425.30</td>
+                        <td class="data-value">12.4</td>
+                        <td class="data-negative">+70.2%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Abril</strong></td>
+                        <td class="data-negative">10.6%</td>
+                        <td class="data-value">475.82</td>
+                        <td class="data-value">12.7</td>
+                        <td class="data-negative">+85.5%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mayo</strong></td>
+                        <td class="data-positive">6.3%</td>
+                        <td class="data-value">554.43</td>
+                        <td class="data-value">12.971</td>
+                        <td class="data-negative">+96.2%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Junio</strong></td>
+                        <td class="data-negative">13.8%</td>
+                        <td class="data-value">623.02</td>
+                        <td class="data-value">13.998</td>
+                        <td class="data-negative">+129.82%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <!-- Modales -->
+    <!-- Modal: Panorama Económico Trimestral 2026 -->
+    <div id="panorama-trimestral" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Panorama Económico Trimestral 2026</h2>
+                <button class="close-btn" onclick="closeModal('panorama-trimestral')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>Introducción</h3>
+                <p>El análisis del panorama económico para 2026 refleja un contexto de transición hacia mayores niveles de estabilidad macroeconómica, aunque persisten desafíos significativos. Este período se caracteriza por la implementación de medidas de política monetaria más restrictivas y un ambiente de austeridad fiscal que impacta directamente en el nivel de actividad económica.</p>
+
+                <h3>Proyecciones Macroeconómicas</h3>
+                <div class="stat-grid">
+                    <div class="stat-item negative">
+                        <div class="stat-value">145%</div>
+                        <div class="stat-label">Inflación Proyectada</div>
+                    </div>
+                    <div class="stat-item negative">
+                        <div class="stat-value">38.5</div>
+                        <div class="stat-label">Tipo de Cambio (Bs/$)</div>
+                    </div>
+                    <div class="stat-item positive">
+                        <div class="stat-value">+1.8%</div>
+                        <div class="stat-label">Crecimiento PIB</div>
+                    </div>
+                    <div class="stat-item negative">
+                        <div class="stat-value">31.2%</div>
+                        <div class="stat-label">Desempleo Estimado</div>
+                    </div>
+                </div>
+
+                <h4>Inflación y Presiones de Precios</h4>
+                <p>Se proyecta una inflación de 145% para 2026, representando una desaceleración respecto a los niveles actuales de 187%. Esta reducción se debe a:</p>
+                <ul>
+                    <li>Mayor restricción monetaria implementada por el Banco Central</li>
+                    <li>Ajuste en la política cambiaria hacia un régimen más flexible</li>
+                    <li>Ancla nominal proporcionada por la estabilidad del tipo de cambio</li>
+                    <li>Moderación gradual en costos de importación</li>
+                </ul>
+
+                <p>Sin embargo, persisten presiones inflacionarias derivadas de expectativas desancladas y shocks de oferta relacionados con limitaciones en capacidad productiva.</p>
+
+                <h4>Actividad Económica</h4>
+                <p>Se proyecta un crecimiento del PIB de 1.8% para 2026, impulsado principalmente por:</p>
+                <ul>
+                    <li>Recuperación gradual del sector no petrolero</li>
+                    <li>Expansión del sector agrícola con inversión privada</li>
+                    <li>Crecimiento en servicios financieros y comercio</li>
+                    <li>Inversión extranjera limitada pero creciente en sectores selectivos</li>
+                </ul>
+
+                <div class="modal-stat">
+                    <h4>Dinamica del Empleo</h4>
+                    <p>La tasa de desempleo se proyecta en 31.2% para 2026, reflejando un crecimiento neto limitado en puestos de trabajo. Los sectores con mayor capacidad de generación de empleo son:</p>
+                    <ul>
+                        <li>Comercio minorista y servicios (5,000 empleos mensuales)</li>
+                        <li>Construcción y obras civiles (3,000 empleos mensuales)</li>
+                        <li>Turismo y hotelería (2,500 empleos mensuales)</li>
+                    </ul>
+                </div>
+
+                <h4>Remesas e Ingresos Externos</h4>
+                <p>Se proyecta que las remesas alcancen USD 6,500 millones en 2026, manteniendo su papel crítico como fuente de divisas y estabilización de demanda de consumo. Esto representa una oportunidad para fortalecer el sector externo y acumular reservas internacionales.</p>
+
+                <h3>Escenarios de Riesgo</h3>
+                <h4>Riesgo Negativo</h4>
+                <ul>
+                    <li>Deterioro de términos de intercambio por caída de precios de commodities</li>
+                    <li>Contracción más profunda en inversión privada</li>
+                    <li>Limitaciones en acceso a financiamiento externo</li>
+                </ul>
+
+                <h4>Riesgo Positivo</h4>
+                <ul>
+                    <li>Mayor estabilidad política facilitando reformas institucionales</li>
+                    <li>Recuperación acelerada de producción petrolera</li>
+                    <li>Atracción de inversión extranjera directa en minería y energías renovables</li>
+                </ul>
+
+                <h3>Conclusiones</h3>
+                <p>El panorama para 2026 sugiere una economía en transición hacia mayor estabilidad, aunque con ritmo de recuperación moderado. La consolidación de disciplina fiscal y monetaria es crítica para anclar inflación y reconstruir credibilidad institucional, sendero necesario para atraer inversión y retomar crecimiento sostenido.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Balance del Sector Petrolero -->
+    <div id="balance-petrolero" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Balance del Sector Petrolero</h2>
+                <button class="close-btn" onclick="closeModal('balance-petrolero')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>Introducción</h3>
+                <p>El sector petrolero venezolano continúa siendo fundamental para la economía nacional, a pesar de los retos que enfrenta. Este análisis examina la situación actual de producción, exportaciones y las perspectivas de recuperación en el mediano plazo.</p>
+
+                <h3>Situación Actual de Producción</h3>
+                <div class="stat-grid">
+                    <div class="stat-item negative">
+                        <div class="stat-value">710</div>
+                        <div class="stat-label">mil bpd Producción</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">320</div>
+                        <div class="stat-label">mil bpd Exportación</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">USD 75.40</div>
+                        <div class="stat-label">Precio WTI (barril)</div>
+                    </div>
+                    <div class="stat-item negative">
+                        <div class="stat-value">-62%</div>
+                        <div class="stat-label">Caída vs 2012</div>
+                    </div>
+                </div>
+
+                <h4>Capacidad Productiva</h4>
+                <p>La producción actual de 710 mil barriles por día representa una ligera recuperación respecto a mínimos de 2023, pero sigue siendo históricamente baja. Los principales factores limitantes incluyen:</p>
+                <ul>
+                    <li>Edad promedio de campos: mayor deterioro y declinación natural</li>
+                    <li>Falta de inversión en mantenimiento preventivo</li>
+                    <li>Limitaciones de acceso a tecnología y repuestos</li>
+                    <li>Degradación de la infraestructura de refino</li>
+                    <li>Emigración de personal técnico calificado</li>
+                </ul>
+
+                <h4>Exportaciones</h4>
+                <p>Las exportaciones petroleras representan aproximadamente 95% de los ingresos por exportaciones tradicionales, con un volumen actual de 320 mil barriles por día. Los principales destinos son:</p>
+                <ul>
+                    <li><strong>China:</strong> 65% de exportaciones (~208 mil bpd)</li>
+                    <li><strong>India:</strong> 20% de exportaciones (~64 mil bpd)</li>
+                    <li><strong>Otros:</strong> 15% de exportaciones (~48 mil bpd)</li>
+                </ul>
+
+                <p>El valor de exportaciones petroleras se estima en USD 8,800 millones anuales, financiando aproximadamente el 78% del gasto público corriente.</p>
+
+                <div class="modal-stat">
+                    <h4>Impacto Fiscal</h4>
+                    <p>Los ingresos petroleros son críticos para el balance fiscal. Un barril adicional representa USD 24 millones en ingresos anuales. La volatilidad de precios internacionales genera incertidumbre en la planificación fiscal y afecta la capacidad de servicio de deuda externa.</p>
+                </div>
+
+                <h3>Perspectivas de Recuperación</h3>
+                <h4>Escenario Base (Plazo Mediano 2024-2028)</h4>
+                <ul>
+                    <li><strong>Producción esperada 2026:</strong> 850 mil bpd</li>
+                    <li><strong>Producción esperada 2028:</strong> 1.0 millones bpd</li>
+                    <li><strong>Inversión requerida:</strong> USD 8,000-10,000 millones</li>
+                    <li><strong>Fuentes de financiamiento:</strong> Asociaciones público-privadas, crédito supplier, reinversión de utilidades</li>
+                </ul>
+
+                <h4>Factores Limitantes</h4>
+                <p>A pesar del potencial de recuperación, existen barreras significativas:</p>
+                <ul>
+                    <li>Acceso limitado a financiamiento internacional debido a sanciones</li>
+                    <li>Necesidad de tecnología especializada no disponible localmente</li>
+                    <li>Degradación de capacidades técnicas e institucionales</li>
+                    <li>Incertidumbre regulatoria y político-institucional</li>
+                </ul>
+
+                <h3>Oportunidades de Crecimiento</h3>
+                <h4>Gas Natural</h4>
+                <p>El sector de gas natural presenta oportunidades significativas con estimaciones de reservas de 147 billones de pies cúbicos. Potencial de expansión hacia:</p>
+                <ul>
+                    <li>Gas para consumo doméstico (reducir importaciones de gasolina)</li>
+                    <li>Petroquímica y derivados (mayor valor agregado)</li>
+                    <li>Exportación de gas natural licuado (GNL) en largo plazo</li>
+                </ul>
+
+                <h4>Asociaciones Estratégicas</h4>
+                <p>La participación de empresas internacionales mediante asociaciones podría acelerar recuperación productiva, aportando capital, tecnología y mercados. Modelos exitosos incluyen operaciones en Campo Perla y otras concesiones mixtas.</p>
+
+                <h3>Escenarios de Precios Petroleros 2026</h3>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">USD 60</div>
+                        <div class="stat-label">Escenario Bajo</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">USD 75</div>
+                        <div class="stat-label">Escenario Base</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">USD 95</div>
+                        <div class="stat-label">Escenario Alto</div>
+                    </div>
+                </div>
+
+                <h3>Conclusiones</h3>
+                <p>El sector petrolero sigue siendo la columna vertebral fiscal de Venezuela, pero enfrenta desafíos estructurales significativos. La recuperación requerirá inversión substancial, estabilidad institucional y reformas que faciliten asociaciones con capital privado. Con estas condiciones, la producción podría alcanzar 1.2 millones de bpd para 2030, regenerando la capacidad de financiamiento de desarrollo nacional.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Reservas de Oro del Banco Central -->
+    <div id="reservas-oro" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Gestión de Reservas de Oro del Banco Central</h2>
+                <button class="close-btn" onclick="closeModal('reservas-oro')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>Introducción</h3>
+                <p>Por décadas Venezuela mantuvo parte del oro de sus reservas internacionales en bancos internacionales hasta que, en 2011, el fallecido presidente Hugo Chávez ordenó repatriar varias toneladas de oro bajo el argumento de la "soberanía". Años después de la medida se realizaron manejos opacos con los activos del Banco Central. En el gobierno de Nicolás Maduro, el oro sirvió de garantía para financiamientos, y cuando ya no fueron posibles los canjes, comenzaron los retiros de lingotes a destinos como Turquía y Emiratos Árabes Unidos.</p>
+
+                <h3>Composición y Valuación de Reservas</h3>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">350</div>
+                        <div class="stat-label">Toneladas en 2011</div>
+                    </div>
+                    <div class="stat-item negative">
+                        <div class="stat-value">47</div>
+                        <div class="stat-label">Toneladas Actuales</div>
+                    </div>
+                    <div class="stat-item negative">
+                        <div class="stat-value">-86.6%</div>
+                        <div class="stat-label">Reducción Total</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">USD 2,450</div>
+                        <div class="stat-label">Precio por Gramo</div>
+                    </div>
+                </div>
+
+                <h3>Cronología del Manejo de Reservas de Oro</h3>
+
+                <h4>2011 - Repatriación Ordenada por Chávez</h4>
+                <p>En 2011 el Banco Central de Venezuela tenía en sus reservas más de 350 toneladas de oro, de las cuales 60% estaba en instituciones financieras en Europa y Estados Unidos. Ese año, antes de las elecciones presidenciales, Chávez ordenó repatriar aproximadamente 200 toneladas con el argumento de que la medida era parte de la "soberanía nacional". Sin embargo, el ente emisor dejó parte de sus activos en entidades como el Banco de Inglaterra para usarlos en futuras operaciones.</p>
+
+                <h4>2014-2016 - Primeros Canjes</h4>
+                <p>A fines de 2014 la administración de Nicolás Maduro enfrentó una disminución de su flujo de ingresos por la caída de los precios del crudo. Ante la necesidad de dinero para atender importaciones y pagos de deuda, entre 2015 y 2016 utilizó una porción de oro que estaba fuera de Venezuela como garantía para operaciones con bancos internacionales como Citibank y Deutsche Bank. Los préstamos o canjes serían repagados para no perder los lingotes utilizados como respaldo.</p>
+
+                <div class="modal-stat">
+                    <h4>Operación de Garantía</h4>
+                    <p>El oro se utilizaba como colateral para obtener liquidez de corto plazo. El sistema funcionaba así: se entregaban lingotes al banco como garantía de un préstamo, y si se pagaba oportunamente, se recuperaba el oro.</p>
+                </div>
+
+                <h4>2017 - Primera Pérdida Significativa de Oro</h4>
+                <p>En 2017 la crisis de ingresos y los pesados compromisos de deuda llevaron al gobierno a dejar perder un canje con Deutsche Bank por 1,700 millones de dólares. El ente emisor tenía que cancelar 1,200 millones de dólares; al no hacerlo, la institución alemana se quedó con el oro y le entregó al emisor una diferencia de 400 millones de dólares porque las barras dadas en garantía superaban el monto del préstamo.</p>
+
+                <h4>2018 - Recuperación Parcial</h4>
+                <p>En 2018 la estrategia cambió. Si bien los precios del crudo subieron, la producción petrolera aceleró su caída. Pese a que el volumen de ingresos distaba de los registrados en años anteriores, las autoridades cancelaron al Citibank uno de los canjes y así el BCV recuperó el oro otorgado en garantía en esa operación. A fines de 2018 el BCV solicitó del Banco de Inglaterra 14 toneladas de oro de las reservas que están en la institución. Al comienzo de 2019 esa posición en la entidad británica aumentó a 31 toneladas tras el pago que hizo el emisor de un préstamo con el Deutsche Bank.</p>
+
+                <h4>2019 - Operaciones con Turquía y Emiratos</h4>
+                <p>A la par que el Gobierno pagó los financiamientos para tener más barras de oro y hacía gestiones en el Banco de Inglaterra para retirar una porción de los lingotes, se incrementaban las operaciones con Turquía y Emiratos Árabes Unidos, países donde el emisor envió parte del oro monetario con el fin de tener liquidez en la primera mitad de 2019. Los estados financieros del Banco Central mostraron que el pasado año las reservas de oro cayeron en más de 20 toneladas.</p>
+
+                <h4>Segunda Mitad de 2019 - Nuevas Pérdidas</h4>
+                <p>Tras el incremento de las sanciones de Estados Unidos, el BCV no consiguió pagar otros préstamos al Citibank y Deutsche Bank, por lo que las instituciones se quedaron con 1,400 millones de dólares en oro. Al igual que en los canjes anteriores, fueron entregados más lingotes como respaldo. Los bancos vendieron esas barras y la diferencia fue depositada en cuentas del BCV. Por ejemplo, la diferencia por el canje con el Citi fueron los 340 millones de dólares que fueron colocados en una cuenta del emisor en la Reserva Federal. El Deutsche Bank también vendió el oro remanente, siendo el monto 120 millones de dólares que están en un litigio en un tribunal en Londres.</p>
+
+                <h4>2020 - Retiros Urgentes sin Justificación</h4>
+                <p>Entre enero y abril de 2020 retiraron aproximadamente 15 toneladas de oro de las bóvedas del BCV, sin detalles del destino de esos lingotes. En ese período, la producción petrolera siguió en declive, las medidas de Washington aumentaron, a lo que se sumó una caída de los precios del crudo como efecto de la crisis por el coronavirus.</p>
+
+                <h4>Puja con el Banco de Inglaterra</h4>
+                <p>Ante la pandemia, en marzo de 2020 el BCV pidió al Banco de Inglaterra vender parte del oro que tiene en la institución por unos 1,000 millones de dólares, para que dichos fondos fueran entregados al PNUD con el argumento de atender la emergencia por el coronavirus en el país. Sin embargo, la entidad británica no ha dado respuesta satisfactoria y el BCV demandó en un tribunal de Londres, caso que está en proceso.</p>
+
+                <h3>Análisis de Transparencia y Gestión</h3>
+
+                <h4>Falta de Claridad en Operaciones</h4>
+                <ul>
+                    <li>Las operaciones de oro se realizaron con limitada transparencia pública</li>
+                    <li>No siempre se informó oportunamente sobre pérdidas de reservas</li>
+                    <li>Los destinos de los lingotes retirados no siempre fueron documentados claramente</li>
+                    <li>Ausencia de reportes independientes sobre auditorías físicas</li>
+                </ul>
+
+                <h4>Impacto Acumulativo</h4>
+                <div class="modal-stat">
+                    <h4>Pérdida de Soberanía Monetaria</h4>
+                    <p>En 2011, el Gobierno decidió repatriar el oro del BCV argumentando soberanía, teniendo más de 350 toneladas de oro tanto en el país como en instituciones financieras internacionales. Hoy la disponibilidad de los lingotes ronda las 47 toneladas, representando una reducción de más del 86% en poco menos de una década.</p>
+                </div>
+
+                <h3>Destinos y Operaciones Documentadas</h3>
+
+                <h4>Instituciones Financieras Involucradas</h4>
+                <ul>
+                    <li><strong>Citibank:</strong> Múltiples operaciones de canje entre 2015-2019</li>
+                    <li><strong>Deutsche Bank:</strong> Canjes donde el banco retuvo oro por incumplimiento de pagos</li>
+                    <li><strong>Banco de Inglaterra:</strong> Custodia de reservas, intentos de venta para COVID-19</li>
+                    <li><strong>Banco de Reserva Federal de Nueva York:</strong> Cuentas en liquidez de canjes</li>
+                </ul>
+
+                <h4>Destinos Internacionales de Oro Enviado</h4>
+                <ul>
+                    <li><strong>Turquía:</strong> Receptor de lingotes para operaciones de liquidez en 2019</li>
+                    <li><strong>Emiratos Árabes Unidos:</strong> Destino de envíos de oro monetario</li>
+                    <li><strong>Países Aliados:</strong> Colocación en bancos centrales de jurisdicciones amigas</li>
+                </ul>
+
+                <h3>Lecciones y Reflexiones</h3>
+
+                <p>El manejo de las reservas de oro de Venezuela ilustra cómo circunstancias de crisis económica y presión de deuda pueden llevar a comprometer activos estratégicos de largo plazo. La combinación de caída de precios de commodities, sanciones internacionales y deuda creciente creó un ciclo donde el oro, tradicional instrumento de estabilización, fue utilizado como fuente de liquidez de corto plazo.</p>
+
+                <p>La falta de transparencia en estas operaciones ha generado preocupación sobre el verdadero nivel de reservas disponibles y la capacidad del banco central para retomar su papel de estabilizador macroeconómico. Expertos señalan que recuperar la confianza en las instituciones financieras requeriría auditorías independientes y mayores niveles de transparencia en futuras operaciones con activos de reserva.</p>
+
+                <h3>Situación Actual y Perspectivas</h3>
+
+                <p>Con reservas de oro estimadas actualmente en aproximadamente 47 toneladas, la capacidad del Banco Central para utilizar este activo como instrumento de política monetaria ha disminuido significativamente. La recuperación de reservas y la estabilización monetaria requerirían cambios profundos en las condiciones macroeconómicas internacionales y en la política económica doméstica.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h3 style="margin-bottom: 1rem;">Ecodata</h3>
+            <p style="margin-bottom: 1rem;">Información económica confiable sobre la realidad de Venezuela</p>
+            <div class="footer-links">
+                <a href="#">Política de Privacidad</a>
+                <a href="#">Términos de Uso</a>
+                <a href="#">Contacto</a>
+                <a href="#">Suscripción</a>
+            </div>
+            <p>&copy; 2024 Ecodata. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Navegación entre secciones
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const sectionId = link.getAttribute('data-section');
+                showSection(sectionId);
+                
+                // Actualizar active en navegación
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            });
+        });
+
+        function showSection(sectionId) {
+            // Ocultar todas las secciones
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Mostrar la sección seleccionada
+            document.getElementById(sectionId).classList.add('active');
+
+            // Scroll suave al inicio de la sección
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function scrollToSection(sectionId) {
+            showSection(sectionId);
+            document.querySelector('.nav-link[data-section="' + sectionId + '"]').classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => {
+                if (l.getAttribute('data-section') !== sectionId) {
+                    l.classList.remove('active');
+                }
+            });
+        }
+
+        // Agregar interactividad a las tarjetas
+        document.querySelectorAll('.article-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.cursor = 'pointer';
+            });
+        });
+
+        // Efectos dinámicos
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.boxShadow = '0 4px 20px rgba(0, 102, 204, 0.2)';
+            } else {
+                header.style.boxShadow = '0 2px 10px rgba(0, 102, 204, 0.1)';
+            }
+        });
+
+        // Funciones para manejo de modales
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Cerrar modal al hacer click fuera del contenido
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    const modalId = modal.id;
+                    closeModal(modalId);
+                }
+            });
+        });
+
+        // Cerrar modal con tecla Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.show').forEach(modal => {
+                    closeModal(modal.id);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
